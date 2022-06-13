@@ -1,0 +1,1 @@
+from .page_register_account import PageRegisterAccount
