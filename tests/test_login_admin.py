@@ -1,39 +1,32 @@
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from page_object.login import PageAdminLogin
+from page_objects.AdminPageLogin import AdminPageLogin
+
+path = "/admin"
 
 
 def test_admin(driver):
-    driver.get(driver.url + "/admin")
-    assert WebDriverWait(driver, 1).until(EC.title_is("Administration"))
+    driver.open(path)
+    AdminPageLogin(driver).verify_page("Administration")
 
 
 def test_find_opencart(driver):
-    driver.get(driver.url + "/admin")
-    op_link = WebDriverWait(driver, 1).until(EC.visibility_of_element_located(locator=PageAdminLogin.OPENCART_LINK))
-    assert op_link.text == "OpenCart"
+    driver.open(path)
+    AdminPageLogin(driver).get_opencart_link()
 
 
 def test_find_login(driver):
-    driver.get(driver.url + "/admin")
-    assert WebDriverWait(driver, 1).until(EC.visibility_of_element_located(locator=PageAdminLogin.ADMIN_LINK))
+    driver.open(path)
+    AdminPageLogin(driver).verify_login_link()
 
 
 def test_forgotten(driver):
-    driver.get(driver.url + "/admin")
-    wait = WebDriverWait(driver, 2)
-    forgotten_pas = wait.until(EC.visibility_of_element_located(locator=PageAdminLogin.FORGOTTEN_PASSWORD))
-    forgotten_pas.click()
-    assert wait.until(EC.title_is("Forgot Your Password?"))
+    driver.open(path)
+    admin_page_login = AdminPageLogin(driver)
+    admin_page_login.click_forgotten_password()
+    admin_page_login.verify_page("Forgot Your Password?")
 
 
 def test_login(driver):
-    driver.get(driver.url + "/admin")
-    wait = WebDriverWait(driver, 4)
-    username = wait.until(EC.visibility_of_element_located(locator=PageAdminLogin.USERNAME_INPUT))
-    username.send_keys('user')
-    password = wait.until(EC.visibility_of_element_located(locator=PageAdminLogin.PASSWORD_INPUT))
-    password.send_keys('bitnami')
-    button = wait.until(EC.visibility_of_element_located(locator=PageAdminLogin.SUBMIT_BUTTON))
-    button.click()
-    assert wait.until(EC.title_is("Dashboard"))
+    driver.open(path)
+    admin_page_login = AdminPageLogin(driver)
+    admin_page_login.login("user", "bitnami")
+    admin_page_login.verify_page("Dashboard")
