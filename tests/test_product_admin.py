@@ -15,7 +15,7 @@ def test_create_product(driver):
     driver.open(path)
     admin_page = AdminPage(driver)
     AdminPageLogin(driver).login("user", "bitnami")
-    admin_page.go_to_product()
+    admin_page.go_to_page_products()
     admin_page.create_product(name, text, tag, model, price, quantity)
     admin_page.verify_product(name)
 
@@ -24,7 +24,5 @@ def test_delete_product(driver):
     driver.open(path)
     admin_page = AdminPage(driver)
     AdminPageLogin(driver).login("user", "bitnami")
-    admin_page.go_to_product()
-    admin_page.verify_product(name)
+    admin_page.go_to_page_products()
     admin_page.delete_product()
-    admin_page.verify_product(name)

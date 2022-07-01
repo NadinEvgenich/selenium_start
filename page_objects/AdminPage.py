@@ -25,7 +25,7 @@ class AdminPage(BasePage):
     CHECKBOX = (By.CSS_SELECTOR, '[type="checkbox"]')
     DELETE = (By.CLASS_NAME, "btn-danger")
 
-    def go_to_product(self):
+    def go_to_page_products(self):
         self._click_element(self._get_element(self.CATALOG))
         self._click_element(self._get_element(self.PRODUCTS))
 
@@ -50,8 +50,6 @@ class AdminPage(BasePage):
         el = self.driver.find_elements(*self.TABLE)
         if len(el) < 2:
             raise AssertionError("Product not created!")
-        if len(el) > 2:
-            raise AssertionError("Product not deleted!")
 
     def delete_product(self):
         self._click_element(self.driver.find_elements(*self.CHECKBOX)[1])
