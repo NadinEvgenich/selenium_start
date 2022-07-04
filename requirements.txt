@@ -1,5 +1,5 @@
 pytest==7.0.1
-selenium==3.14.1
+selenium==4.2.0
 
 
 

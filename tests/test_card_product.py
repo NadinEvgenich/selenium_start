@@ -1,36 +1,33 @@
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from page_objects.CardPage import CardPage
+
+path = "/MacBook"
 
 
 def test_find_macbook(driver):
-    driver.get(driver.url + "/MacBook")
-    wait = WebDriverWait(driver, 1)
-    pic = wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "MacBook")))
-    wait.until(EC.text_to_be_present_in_element((By.LINK_TEXT, "MacBook"), "MacBook"))
-    assert pic.text == "MacBook"
+    driver.open(path)
+    CardPage(driver).get_name()
 
 
 def test_find_price(driver):
-    driver.get(driver.url + "/MacBook")
-    price = WebDriverWait(driver, 1).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "li>h2")))
+    driver.open(path)
+    price = CardPage(driver).get_price()
     assert price.text == "$602.00"
 
 
 def test_add_button(driver):
-    driver.get(driver.url + "/MacBook")
-    assert WebDriverWait(driver, 1).until(EC.visibility_of_element_located((By.ID, "button-cart")))
+    driver.open(path)
+    CardPage(driver).verify_get_add_button()
 
 
 def test_image(driver):
-    driver.get(driver.url + "/MacBook")
-    images = driver.find_elements(By.CSS_SELECTOR, ".image-additional")
+    driver.open(path)
+    images = CardPage(driver).get_images()
     assert len(images) == 4
 
 
 def test_review(driver):
-    driver.get(driver.url + "/MacBook")
-    driver.find_element(By.CSS_SELECTOR, "a[href='#tab-review']").click()
-    button = WebDriverWait(driver, 3).until(
-        EC.visibility_of_element_located((By.ID, "button-review")))
+    driver.open(path)
+    card_page = CardPage(driver)
+    card_page.click_tab_reviews()
+    button = card_page.get_continue_button()
     assert button.text == "Continue"

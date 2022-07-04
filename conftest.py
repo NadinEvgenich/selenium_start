@@ -6,7 +6,7 @@ from selenium import webdriver
 
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome")
-    parser.addoption("--url", action="store", default="http://192.168.1.39:8081")
+    parser.addoption("--url", action="store", default="http://192.168.1.68:8081")
     parser.addoption("--drivers", action="store", default=os.path.expanduser("~/Загрузки/Drivers"))
 
 
@@ -28,7 +28,14 @@ def driver(request):
         raise ValueError("Browser not supported!")
 
     request.addfinalizer(browser.close)
-    browser.get(url)
-    browser.url = url
+
+    def open(path=""):
+        return browser.get(url + path)
+
+    browser.maximize_window()
+    browser.implicitly_wait(5)
+
+    browser.open = open
+    browser.open()
 
     return browser
