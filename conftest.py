@@ -1,41 +1,66 @@
-import os
+import os.path
+import time
 import pytest
+import logging
 
 from selenium import webdriver
 
 
 def pytest_addoption(parser):
-    parser.addoption("--browser", action="store", default="chrome")
-    parser.addoption("--url", action="store", default="http://192.168.1.68:8081")
-    parser.addoption("--drivers", action="store", default=os.path.expanduser("~/Загрузки/Drivers"))
+    parser.addoption("--browser", default="chrome", choices=["chrome", "firefox", "opera", "safari", "MicrosoftEdge"])
+    parser.addoption("--executor", default="192.168.1.68")
+    parser.addoption("--vnc", action="store_true", default=False)
+    parser.addoption("--log_level", action="store", default="DEBUG")
+    parser.addoption("--bversion", action="store", default="102.0")
 
 
 @pytest.fixture()
 def driver(request):
-    browser_name = request.config.getoption("--browser")
-    url = request.config.getoption("--url")
-    drivers = request.config.getoption("--drivers")
+    browser = request.config.getoption("--browser")
+    executor = request.config.getoption('--executor')
+    log_level = request.config.getoption("--log_level")
+    version = request.config.getoption("--bversion")
+    vnc = request.config.getoption("--vnc")
 
-    if browser_name == "chrome":
-        browser = webdriver.Chrome(executable_path=drivers + "/chromedriver")
-    elif browser_name == "firefox":
-        browser = webdriver.Firefox(executable_path=drivers + "/geckodriver")
-    elif browser_name == "opera":
-        browser = webdriver.Opera(executable_path=drivers + "/operadriver")
-    elif browser_name == "yandex":
-        browser = webdriver.Chrome(executable_path=drivers + "/yandexdriver")
+    logger = logging.getLogger(request.node.name)
+    file_handler = logging.FileHandler(f"logs/{request.node.name}.log")
+    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    logger.addHandler(file_handler)
+    logger.setLevel(level=log_level)
+
+    logger.info(f"===> Test {request.node.name} started at {time.asctime()}")
+
+    if browser == "chrome":
+        driver = webdriver.Chrome(executable_path=os.path.expanduser("~/Загрузки/Drivers/chromedriver"))
+
     else:
-        raise ValueError("Browser not supported!")
+        executor_url = f"http://{executor}:4444/wd/hub"
+        capabilities = {
+            "browserName": browser,
+            "browserVersion": version,
+            "selenoid:options": {
+                "enableVNC": vnc
+            },
+            "name": "Capricornio"
+        }
 
-    request.addfinalizer(browser.close)
+        driver = webdriver.Remote(
+            desired_capabilities=capabilities,
+            command_executor=executor_url
+        )
 
-    def open(path=""):
-        return browser.get(url + path)
+    driver.log_level = log_level
+    driver.logger = logger
+    driver.test_name = request.node.name
 
-    browser.maximize_window()
-    browser.implicitly_wait(5)
+    logger.info("Browser:{}".format(browser))
 
-    browser.open = open
-    browser.open()
+    driver.maximize_window()
+    driver.implicitly_wait(5)
 
-    return browser
+    def fin():
+        driver.quit()
+        logger.info(f"===> Test {request.node.name} finished at {time.asctime()}")
+
+    request.addfinalizer(fin)
+    return driver

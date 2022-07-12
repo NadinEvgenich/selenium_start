@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 from .BasePage import BasePage
 
@@ -14,19 +15,24 @@ class UserRegistrationForm(BasePage):
     RADIOBUTTON = (By.CSS_SELECTOR, "input[name='newsletter']")
     CHECKBOX = (By.CSS_SELECTOR, "input[type='checkbox']")
 
+    @allure.step("Нахожу страницу")
     def verify_page(self, title):
         self._verify_title(title)
 
+    @allure.step("Выполняю клик по кнопке для авторизации")
     def click_login(self):
         self._click_element(self._get_element(self.LOGIN_LINK))
 
+    @allure.step("Получаю радиобатонны")
     def get_radiobutton(self):
         radiobutton = self.driver.find_elements(*self.RADIOBUTTON)
         return radiobutton
 
+    @allure.step("Нахожу чекбокс")
     def verify_checkbox(self):
         self._verify_element(self.CHECKBOX)
 
+    @allure.step("Регистрирую пользователя")
     def registration(self, first_name, last_name, email, phone, password):
         self._get_element(self.FIRSTNAME_INPUT).send_keys(first_name)
         self._get_element(self.LASTNAME_INPUT).send_keys(last_name)
