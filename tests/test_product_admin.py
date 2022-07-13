@@ -1,8 +1,7 @@
 import allure
 from page_objects.AdminPageLogin import AdminPageLogin
 from page_objects.AdminPage import AdminPage
-
-url = "http://192.168.1.68:8081/admin"
+from helpers import admin_url
 
 name = "Canon EOS R10"
 text = "A camera so versatile it can tackle virtually anything. It’s the ideal travel companion."
@@ -15,7 +14,7 @@ quantity = "500"
 @allure.title('Тест на создание продукта в админке')
 def test_create_product(driver):
     admin_page = AdminPage(driver)
-    admin_page._open(url)
+    admin_page._open(admin_url)
     AdminPageLogin(driver).login("user", "bitnami")
     admin_page.go_to_page_products()
     admin_page.create_product(name, text, tag, model, price, quantity)
@@ -25,7 +24,7 @@ def test_create_product(driver):
 @allure.title('Тест на удаление товара из каталога в админке')
 def test_delete_product(driver):
     admin_page = AdminPage(driver)
-    admin_page._open(url)
+    admin_page._open(admin_url)
     AdminPageLogin(driver).login("user", "bitnami")
     admin_page.go_to_page_products()
     admin_page.delete_product()

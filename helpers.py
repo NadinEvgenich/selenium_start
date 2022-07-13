@@ -1,0 +1,5 @@
+local = "192.168.1.68:8081"
+admin_url = f"http://{local}/admin"
+main_url = f"http://{local}"
+card_url = f"http://{local}/MacBook"
+reg_url = f"http://{local}/index.php?route=account/register"
