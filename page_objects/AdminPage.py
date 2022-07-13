@@ -1,4 +1,4 @@
-import os
+import allure
 from selenium.webdriver.common.by import By
 from .BasePage import BasePage
 from selenium.webdriver.support.select import Select
@@ -25,10 +25,12 @@ class AdminPage(BasePage):
     CHECKBOX = (By.CSS_SELECTOR, '[type="checkbox"]')
     DELETE = (By.CLASS_NAME, "btn-danger")
 
+    @allure.step("Перехожу на вкладку с товарами")
     def go_to_page_products(self):
         self._click_element(self._get_element(self.CATALOG))
         self._click_element(self._get_element(self.PRODUCTS))
 
+    @allure.step("Создаю новый товар")
     def create_product(self, name, text, tag, model, price, quantity):
         self._click_element(self._get_element(self.ADD_NEW))
         self._get_element(self.PRODUCT_NAME).send_keys(name)
@@ -44,13 +46,19 @@ class AdminPage(BasePage):
         self._verify_element(self.ALERT)
         self._click_element(self._get_element(self.CLOSE_ALERT))
 
+    @allure.step("Проверяю, что товар создался")
     def verify_product(self, name):
         self._get_element(self.FILTER_PRODUCT_NAME).send_keys(name)
         self._click_element(self._get_element(self.BTN_FILTER))
         el = self.driver.find_elements(*self.TABLE)
         if len(el) < 2:
+            allure.attach(name=f"{name}",
+                          body=self.driver.get_screenshot_as_png(),
+                          attachment_type=allure.attachment_type.PNG
+                          )
             raise AssertionError("Product not created!")
 
+    @allure.step("Удаляю товар")
     def delete_product(self):
         self._click_element(self.driver.find_elements(*self.CHECKBOX)[1])
         self._click_element(self._get_element(self.DELETE))
