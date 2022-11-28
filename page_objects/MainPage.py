@@ -4,9 +4,9 @@ from .BasePage import BasePage
 
 
 class MainPage(BasePage):
-    CARDS = (By.CSS_SELECTOR, ".product-layout.col-lg-3.col-md-3.col-sm-6.col-xs-12")
-    BASKET = (By.ID, "cart-total")
-    CARET = (By.CSS_SELECTOR, ".caret")
+    CARDS = (By.CSS_SELECTOR, ".product-thumb")
+    BASKET = (By.CSS_SELECTOR, ".fas.fa-shopping-cart")
+    CARET = (By.CSS_SELECTOR, ".fas.fa-caret-down")
     FIND = (By.NAME, "search")
     LOGO = (By.CSS_SELECTOR, "img[title='Your Store']")
 
