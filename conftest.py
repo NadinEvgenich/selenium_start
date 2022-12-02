@@ -8,7 +8,7 @@ from selenium import webdriver
 
 def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome", choices=["chrome", "firefox", "opera", "safari", "MicrosoftEdge"])
-    parser.addoption("--executor", default="192.168.1.68")
+    parser.addoption("--executor", default="localhost")
     parser.addoption("--vnc", action="store_true", default=False)
     parser.addoption("--log_level", action="store", default="DEBUG")
     parser.addoption("--bversion", action="store", default="102.0")
@@ -30,8 +30,9 @@ def driver(request):
 
     logger.info(f"===> Test {request.node.name} started at {time.asctime()}")
 
-    if browser == "chrome":
-        driver = webdriver.Chrome(executable_path=os.path.expanduser("~/Загрузки/Drivers/chromedriver"))
+    if executor == "localhost":
+        if browser == "chrome":
+            driver = webdriver.Chrome(executable_path=os.path.expanduser("~/Загрузки/Drivers/chromedriver"))
 
     else:
         executor_url = f"http://{executor}:4444/wd/hub"

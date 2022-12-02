@@ -10,6 +10,7 @@ class BasePage:
 
     def __init__(self, driver):
         self.driver = driver
+        self.base_url = "https://demo.opencart.com"
 
         self.logger = logging.getLogger(type(self).__name__)
         file_handler = logging.FileHandler(f"logs/{self.driver.test_name}.log")
@@ -21,7 +22,7 @@ class BasePage:
     @allure.step("Открываю url {url}")
     def _open(self, url):
         self.logger.info("Opening url: {}".format(url))
-        self.driver.get(url)
+        return self.driver.get(f"{self.base_url}{url}")
 
     @allure.step("Поиск локатора {locator}")
     def _verify_element(self, locator: tuple):

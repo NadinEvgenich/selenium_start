@@ -1,7 +1,6 @@
 import allure
 from page_objects.UserRegistrationForm import UserRegistrationForm
 from faker import Faker
-from helpers import reg_url
 
 f = Faker()
 first_name = f.first_name()
@@ -13,14 +12,14 @@ password = f.password()
 
 @allure.title('Проверка, что данная страница является регистрацией нового пользователя')
 def test_register(driver):
-    UserRegistrationForm(driver)._open(reg_url)
+    UserRegistrationForm(driver)._open('/index.php?route=account/register')
     UserRegistrationForm(driver).verify_page("Register Account")
 
 
 @allure.title('Появление формы для авторизации пользователя')
 def test_find_login(driver):
     user_reg_form = UserRegistrationForm(driver)
-    user_reg_form._open(reg_url)
+    user_reg_form._open('/index.php?route=account/register')
     user_reg_form.click_login()
     user_reg_form.verify_page("Account Login")
 

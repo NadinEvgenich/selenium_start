@@ -4,7 +4,7 @@ from page_objects.BasePage import BasePage
 
 
 class Currency(BasePage):
-    CARET_DOWN = (By.CLASS_NAME, "fa.fa-caret-down")
+    CARET_DOWN = (By.CLASS_NAME, "fas.fa-caret-down")
     BUTTON_EUR = (By.CSS_SELECTOR, "button[name='EUR']")
     BUTTON_GBP = (By.CSS_SELECTOR, "button[name='GBP']")
     CURRENCY = (By.CSS_SELECTOR, "strong")
