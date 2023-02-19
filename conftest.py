@@ -25,7 +25,6 @@ def driver(request):
     logger = logging.getLogger(request.node.name)
     file_handler = logging.FileHandler(f"logs/{request.node.name}.log")
     file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-    file_handler.setLevel(level=log_level)
     logger.addHandler(file_handler)
     logger.setLevel(level=log_level)
 
