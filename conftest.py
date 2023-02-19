@@ -54,8 +54,8 @@ def driver(request):
 
         driver = webdriver.Remote(
             desired_capabilities=capabilities,
-            command_executor=executor_url)
-        , Listener())
+            command_executor=executor_url
+        ), Listener())
   
 
     logger.info("Test {} started with {} {}".format(test_name, browser, version))
