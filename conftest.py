@@ -65,8 +65,8 @@ def driver(request):
 
     def fin():
         driver.quit()
-         logger.info("Browser {} closed".format(browser))
-         logger.info("Test {} finished".format(test_name))
+        logger.info("Browser {} closed".format(browser))
+        logger.info("Test {} finished".format(test_name))
 
     request.addfinalizer(fin)
     return driver
