@@ -8,7 +8,7 @@ from selenium.webdriver.support.events import EventFiringWebDriver, AbstractEven
 
 
 logging.basicConfig(filename="selenium.log",
-                    format='%(name)s,%(levelname)-8s,%(asctime)s,%(message)s',
+                    format='%(asctime)s %(name)s:%(levelname)s:%(message)s',
                     encoding='utf-8',
                     datefmt='%m/%d/%Y %I:%M:%S',
                     level=logging.INFO
