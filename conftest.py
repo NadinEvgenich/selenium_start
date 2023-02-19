@@ -1,14 +1,15 @@
-import os.path
 import time
 import pytest
 import logging
 
 from selenium import webdriver
+from selenium.webdriver.chrome.webdriver import WebDriver as ChromeDriver
 
 
 def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome", choices=["chrome", "firefox", "opera", "safari", "MicrosoftEdge"])
     parser.addoption("--executor", default="localhost")
+    parser.addoption("--driver_path")
     parser.addoption("--vnc", action="store_true", default=False)
     parser.addoption("--log_level", action="store", default="DEBUG")
     parser.addoption("--bversion", action="store", default="102.0")
@@ -17,7 +18,8 @@ def pytest_addoption(parser):
 @pytest.fixture()
 def driver(request):
     browser = request.config.getoption("--browser")
-    executor = request.config.getoption('--executor')
+    executor = request.config.getoption("--executor")
+    driver_path = request.config.getoption("--driver_path")
     log_level = request.config.getoption("--log_level")
     version = request.config.getoption("--bversion")
     vnc = request.config.getoption("--vnc")
@@ -32,7 +34,8 @@ def driver(request):
 
     if executor == "localhost":
         if browser == "chrome":
-            driver = webdriver.Chrome(executable_path=os.path.expanduser("~/Загрузки/Drivers/chromedriver"))
+            chrome_service = ChromeService(driver_path)
+            driver = ChromeDriver(service=chrome_service)
 
     else:
         executor_url = f"http://{executor}:4444/wd/hub"
