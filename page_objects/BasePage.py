@@ -10,19 +10,28 @@ class BasePage:
 
     def __init__(self, driver):
         self.driver = driver
-        self.base_url = "https://demo.opencart.com"
-
+        self.base_url = driver.url
         self.logger = logging.getLogger(type(self).__name__)
-        file_handler = logging.FileHandler(f"logs/{self.driver.test_name}.log")
-        file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-        self.logger.handlers.clear()
-        self.logger.addHandler(file_handler)
-        self.logger.setLevel(level=self.driver.log_level)
 
-    @allure.step("Открываю url {url}")
-    def _open(self, url):
-        self.logger.info("Opening url: {}".format(url))
-        return self.driver.get(f"{self.base_url}{url}")
+    @allure.step("Открываю main_page")
+    def open_main(self):
+        self.logger.info("Opening url: {self.base_url}/")
+        return self.driver.get(f"{self.base_url}/")
+
+    @allure.step("Открываю registration_page")
+    def open_registration(self):
+        self.logger.info("Opening url: {self.base_url}/index.php?route=account/register")
+        return self.driver.get(self.base_url + f"/index.php?route=account/register")
+
+    @allure.step("Открываю product_page")
+    def open_product(self):
+        self.logger.info("Opening url: {self.base_url}/index.php?route=product/product&language=en-gb&product_id=43")
+        return self.driver.get(self.base_url + f"/index.php?route=product/product&language=en-gb&product_id=43")
+
+    @allure.step("Открываю admin_page")
+    def open_admin(self):
+        self.logger.info("Opening url: {self.base_url}/admin")
+        return self.driver.get(self.base_url + f"/admin")
 
     @allure.step("Поиск локатора {locator}")
     def _verify_element(self, locator: tuple):
