@@ -1,16 +1,14 @@
+import os.path
 import time
 import pytest
 import logging
-from datetime import datetime
 
 from selenium import webdriver
-from selenium.webdriver.chrome.webdriver import WebDriver as ChromeDriver
 
 
 def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome", choices=["chrome", "firefox", "opera", "safari", "MicrosoftEdge"])
     parser.addoption("--executor", default="localhost")
-    parser.addoption("--driver_path")
     parser.addoption("--vnc", action="store_true", default=False)
     parser.addoption("--log_level", action="store", default="DEBUG")
     parser.addoption("--bversion", action="store", default="102.0")
@@ -19,26 +17,22 @@ def pytest_addoption(parser):
 @pytest.fixture()
 def driver(request):
     browser = request.config.getoption("--browser")
-    executor = request.config.getoption("--executor")
-    driver_path = request.config.getoption("--driver_path")
+    executor = request.config.getoption('--executor')
     log_level = request.config.getoption("--log_level")
     version = request.config.getoption("--bversion")
     vnc = request.config.getoption("--vnc")
- 
-    logger = logging.getLogger('driver')
-    test_name = request.node.name
-    if "\\" in test_name:
-        test_name = test_name.split("\\")[0]
-    log_path = f"logs/{test_name}_{datetime.now().strftime('%d-%m-%Y_%H.%M.%S')}.log"
-    logger.addHandler(logging.FileHandler(log_path))
-    logger.setLevel(level=log_level)
-    logger.info(f"{logger.name} ===> Test {test_name} started at {datetime.now()}")
 
+    logger = logging.getLogger(request.node.name)
+    file_handler = logging.FileHandler(f"logs/{request.node.name}.log")
+    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    logger.addHandler(file_handler)
+    logger.setLevel(level=log_level)
+
+    logger.info(f"===> Test {request.node.name} started at {time.asctime()}")
 
     if executor == "localhost":
         if browser == "chrome":
-            chrome_service = ChromeService(driver_path)
-            driver = ChromeDriver(service=chrome_service)
+            driver = webdriver.Chrome(executable_path=os.path.expanduser("~/Загрузки/Drivers/chromedriver"))
 
     else:
         executor_url = f"http://{executor}:4444/wd/hub"
@@ -58,8 +52,7 @@ def driver(request):
 
     driver.log_level = log_level
     driver.logger = logger
-    driver.test_name = test_name
-    driver.log_path = log_path
+    driver.test_name = request.node.name
 
     logger.info("Browser:{}".format(browser))
 
@@ -68,7 +61,7 @@ def driver(request):
 
     def fin():
         driver.quit()
-        logger.info(f"===> Test {test_name} finished at {datetime.now()}")
+        logger.info(f"===> Test {request.node.name} finished at {time.asctime()}")
 
     request.addfinalizer(fin)
     return driver
