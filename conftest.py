@@ -23,14 +23,16 @@ def driver(request):
     log_level = request.config.getoption("--log_level")
     version = request.config.getoption("--bversion")
     vnc = request.config.getoption("--vnc")
-
-    logger = logging.getLogger(request.node.name)
-    file_handler = logging.FileHandler(f"logs/{request.node.name}.log")
-    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-    logger.addHandler(file_handler)
+ 
+    logger = logging.getLogger(test_name)
+    test_name = request.node.name
+    if "\\" in test_name:
+        test_name = test_name.split("\\")[0]
+    log_path = f"logs/{test_name}_{datetime.now().strftime('%d-%m-%Y_%H.%M.%S')}.log"
+    logger.addHandler(logging.FileHandler(log_path))
     logger.setLevel(level=log_level)
+    logger.info(f"{logger.name} ===> Test {test_name} started at {datetime.now()}")
 
-    logger.info(f"===> Test {request.node.name} started at {time.asctime()}")
 
     if executor == "localhost":
         if browser == "chrome":
@@ -55,7 +57,8 @@ def driver(request):
 
     driver.log_level = log_level
     driver.logger = logger
-    driver.test_name = request.node.name
+    driver.test_name = test_name
+    driver.log_path = log_path
 
     logger.info("Browser:{}".format(browser))
 
@@ -64,7 +67,7 @@ def driver(request):
 
     def fin():
         driver.quit()
-        logger.info(f"===> Test {request.node.name} finished at {time.asctime()}")
+        logger.info(f"===> Test {test_name} finished at {datetime.now()}")
 
     request.addfinalizer(fin)
     return driver
