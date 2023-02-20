@@ -1,6 +1,7 @@
 import time
 import pytest
 import logging
+from datetime import datetime
 
 from selenium import webdriver
 from selenium.webdriver.chrome.webdriver import WebDriver as ChromeDriver
