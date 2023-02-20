@@ -13,7 +13,7 @@ quantity = "500"
 @allure.title('Тест на создание продукта в админке')
 def test_create_product(driver):
     admin_page = AdminPage(driver)
-    admin_page._open('/admin')
+    admin_page.open_admin()
     AdminPageLogin(driver).login("user", "bitnami")
     admin_page.go_to_page_products()
     admin_page.create_product(name, text, tag, model, price, quantity)
@@ -23,7 +23,7 @@ def test_create_product(driver):
 @allure.title('Тест на удаление товара из каталога в админке')
 def test_delete_product(driver):
     admin_page = AdminPage(driver)
-    admin_page._open('/admin')
+    admin_page.open_admin()
     AdminPageLogin(driver).login("user", "bitnami")
     admin_page.go_to_page_products()
     admin_page.delete_product()

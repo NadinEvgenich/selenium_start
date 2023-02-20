@@ -1,39 +1,51 @@
-import os.path
-import time
+import os
 import pytest
 import logging
 
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.chrome.webdriver import WebDriver as ChromeDriver
+from selenium.webdriver.support.events import EventFiringWebDriver, AbstractEventListener
+
+
+logging.basicConfig(filename="selenium.log",
+                    format='%(asctime)s:%(levelname)s:%(name)s - %(message)s',
+                    encoding='utf-8',
+                    datefmt='%m/%d/%Y %I:%M:%S',
+                    level=logging.INFO
+                    )
+
+
+class Listener(AbstractEventListener):
+    logger = logging.getLogger('ListenerLoger')
 
 
 def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome", choices=["chrome", "firefox", "opera", "safari", "MicrosoftEdge"])
     parser.addoption("--executor", default="localhost")
+    parser.addoption('--driver_path')
+    parser.addoption("--url", action="store", default="https://demo.opencart.com")
     parser.addoption("--vnc", action="store_true", default=False)
-    parser.addoption("--log_level", action="store", default="DEBUG")
-    parser.addoption("--bversion", action="store", default="102.0")
+    parser.addoption("--logs", action="store_true", default=False)
+    parser.addoption("--bversion", action="store", default="110.0")
 
 
 @pytest.fixture()
 def driver(request):
     browser = request.config.getoption("--browser")
     executor = request.config.getoption('--executor')
-    log_level = request.config.getoption("--log_level")
+    logs = request.config.getoption("--logs")
+    driver_path = request.config.getoption('--driver_path')
     version = request.config.getoption("--bversion")
     vnc = request.config.getoption("--vnc")
-
-    logger = logging.getLogger(request.node.name)
-    file_handler = logging.FileHandler(f"logs/{request.node.name}.log")
-    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-    logger.addHandler(file_handler)
-    logger.setLevel(level=log_level)
-
-    logger.info(f"===> Test {request.node.name} started at {time.asctime()}")
+    url = request.config.getoption("--url")
+    logger = logging.getLogger('BrowserLogger')
+    test_name = request.node.name
 
     if executor == "localhost":
         if browser == "chrome":
-            driver = webdriver.Chrome(executable_path=os.path.expanduser("~/Загрузки/Drivers/chromedriver"))
-
+            chrome_service = ChromeService(driver_path)
+            driver = ChromeDriver(service=chrome_service)
     else:
         executor_url = f"http://{executor}:4444/wd/hub"
         capabilities = {
@@ -45,23 +57,21 @@ def driver(request):
             "name": "Capricornio"
         }
 
-        driver = webdriver.Remote(
+        driver = EventFiringWebDriver(webdriver.Remote(
             desired_capabilities=capabilities,
             command_executor=executor_url
-        )
+        ), Listener())
 
-    driver.log_level = log_level
-    driver.logger = logger
-    driver.test_name = request.node.name
-
-    logger.info("Browser:{}".format(browser))
+        logger.info("Test {} started with {} {}".format(test_name, browser, version))
 
     driver.maximize_window()
     driver.implicitly_wait(5)
+    driver.url = url
 
     def fin():
         driver.quit()
-        logger.info(f"===> Test {request.node.name} finished at {time.asctime()}")
+        logger.info("Browser {} closed".format(browser))
+        logger.info("Test {} finished".format(test_name))
 
     request.addfinalizer(fin)
     return driver
