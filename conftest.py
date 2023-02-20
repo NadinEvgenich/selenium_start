@@ -24,7 +24,7 @@ def driver(request):
     version = request.config.getoption("--bversion")
     vnc = request.config.getoption("--vnc")
  
-    logger = logging.getLogger(test_name)
+    logger = logging.getLogger('driver')
     test_name = request.node.name
     if "\\" in test_name:
         test_name = test_name.split("\\")[0]
