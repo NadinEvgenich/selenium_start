@@ -50,9 +50,9 @@ def driver(request):
         if browser == "chrome":
           options = ChromeOptions()
           options.headless = headless
-          options.disable_dev_shm_usage = disable_dev_shm_usage
-          options.window_size = window_size
-          driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options) 
+          options.disable_dev_shm_usage = disable-dev-shm-usage
+          options.window_size = window-size
+          driver = webdriver.Chrome(ChromeDriverManager().install(), options=options) 
     else:
         executor_url = f"http://{executor}:4444/wd/hub"
         capabilities = {
