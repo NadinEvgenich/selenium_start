@@ -77,7 +77,6 @@ def driver(request):
 
     def fin():
         driver.quit()
-        driver.stop_client()
         logger.info("Browser {} closed".format(browser))
         logger.info("Test {} finished".format(test_name))
 
