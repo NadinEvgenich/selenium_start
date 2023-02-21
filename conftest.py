@@ -23,7 +23,6 @@ class Listener(AbstractEventListener):
 def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome", choices=["chrome", "firefox", "opera", "safari", "MicrosoftEdge"])
     parser.addoption("--executor", default="localhost")
-    parser.addoption('--driver_path')
     parser.addoption("--url", action="store", default="https://demo.opencart.com")
     parser.addoption("--vnc", action="store_true", default=False)
     parser.addoption("--logs", action="store_true", default=False)
@@ -35,7 +34,6 @@ def driver(request):
     browser = request.config.getoption("--browser")
     executor = request.config.getoption('--executor')
     logs = request.config.getoption("--logs")
-    driver_path = request.config.getoption('--driver_path')
     version = request.config.getoption("--bversion")
     vnc = request.config.getoption("--vnc")
     url = request.config.getoption("--url")
@@ -44,7 +42,7 @@ def driver(request):
 
     if executor == "localhost":
         if browser == "chrome":
-            chrome_service = ChromeService(driver_path)
+            chrome_service = ChromeService(executable_path="~/Otus_course/selenium_start/drivers/chromedriver")
             driver = ChromeDriver(service=chrome_service)
     else:
         executor_url = f"http://{executor}:4444/wd/hub"
