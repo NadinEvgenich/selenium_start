@@ -24,6 +24,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--driver_folder", default=os.path.expanduser("~/Otus_course/selenium_start/drivers")
     )
+    parser.addoption("--headless", action="store_true")
     parser.addoption("--executor", default="localhost")
     parser.addoption("--url", action="store", default="https://demo.opencart.com")
     parser.addoption("--vnc", action="store_true", default=False)
@@ -35,6 +36,7 @@ def pytest_addoption(parser):
 def driver(request):
     browser = request.config.getoption("--browser")
     driver_folder = request.config.getoption("--driver_folder")
+    headless = request.config.getoption("--headless")
     executor = request.config.getoption('--executor')
     logs = request.config.getoption("--logs")
     version = request.config.getoption("--bversion")
