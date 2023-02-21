@@ -41,7 +41,7 @@ def driver(request):
 
     if executor == "localhost":
         if browser == "chrome":
-            driver = webdriver.Chrome(executable_path="~/Otus_course/selenium_start/drivers/chromedriver")
+            driver = webdriver.Chrome()
     else:
         executor_url = f"http://{executor}:4444/wd/hub"
         capabilities = {
