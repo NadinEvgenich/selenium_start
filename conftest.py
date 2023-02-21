@@ -4,7 +4,6 @@ import logging
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.chrome.webdriver import WebDriver as ChromeDriver
 from selenium.webdriver.support.events import EventFiringWebDriver, AbstractEventListener
 
 
@@ -42,8 +41,7 @@ def driver(request):
 
     if executor == "localhost":
         if browser == "chrome":
-            chrome_service = ChromeService(executable_path="~/Otus_course/selenium_start/drivers/chromedriver")
-            driver = ChromeDriver(service=chrome_service)
+            driver = webdriver.Chrome(executable_path="~/Otus_course/selenium_start/drivers/chromedriver")
     else:
         executor_url = f"http://{executor}:4444/wd/hub"
         capabilities = {
