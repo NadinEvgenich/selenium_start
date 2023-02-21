@@ -1,10 +1,9 @@
-import os
 import pytest
 import logging
 
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options as ChromeOptions
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.support.events import EventFiringWebDriver, AbstractEventListener
 
 
@@ -23,8 +22,6 @@ class Listener(AbstractEventListener):
 def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome", choices=["chrome", "firefox", "opera", "safari", "MicrosoftEdge"])
     parser.addoption("--headless", action="store_true")
-    parser.addoption("--disable-dev-shm-usage", action="store_true")
-    parser.addoption("--window-size", default="1920x1080")
     parser.addoption("--executor", default="localhost")
     parser.addoption("--url", action="store", default="https://demo.opencart.com")
     parser.addoption("--vnc", action="store_true", default=False)
@@ -36,8 +33,6 @@ def pytest_addoption(parser):
 def driver(request):
     browser = request.config.getoption("--browser")
     headless = request.config.getoption("--headless")
-    disable_dev_shm_usage = request.config.getoption("--disable-dev-shm-usage")
-    window_size = request.config.getoption("--window-size")
     executor = request.config.getoption('--executor')
     logs = request.config.getoption("--logs")
     version = request.config.getoption("--bversion")
@@ -48,11 +43,10 @@ def driver(request):
 
     if executor == "localhost":
         if browser == "chrome":
-          options = ChromeOptions()
-          options.headless = headless
-          options.disable_dev_shm_usage = disable-dev-shm-usage
-          options.window_size = window-size
-          driver = webdriver.Chrome(ChromeDriverManager().install(), options=options) 
+            options = ChromeOptions()
+            options.headless = headless
+            driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+
     else:
         executor_url = f"http://{executor}:4444/wd/hub"
         capabilities = {
