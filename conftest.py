@@ -46,7 +46,7 @@ def driver(request):
         if browser == "chrome":
           options = ChromeOptions()
           options.headless = headless
-          driver = webdriver.Chrome(options, ChromeDriverManager().install()) 
+          driver = webdriver.Chrome(options=options, ChromeDriverManager().install()) 
     else:
         executor_url = f"http://{executor}:4444/wd/hub"
         capabilities = {
