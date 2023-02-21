@@ -3,7 +3,7 @@ import pytest
 import logging
 
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options as ChromeOptions
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.events import EventFiringWebDriver, AbstractEventListener
 
 
@@ -21,10 +21,6 @@ class Listener(AbstractEventListener):
 
 def pytest_addoption(parser):
     parser.addoption("--browser", default="chrome", choices=["chrome", "firefox", "opera", "safari", "MicrosoftEdge"])
-    parser.addoption(
-        "--driver_folder", default=os.path.expanduser("~/Otus_course/selenium_start/drivers")
-    )
-    parser.addoption("--headless", action="store_true")
     parser.addoption("--executor", default="localhost")
     parser.addoption("--url", action="store", default="https://demo.opencart.com")
     parser.addoption("--vnc", action="store_true", default=False)
@@ -35,8 +31,6 @@ def pytest_addoption(parser):
 @pytest.fixture()
 def driver(request):
     browser = request.config.getoption("--browser")
-    driver_folder = request.config.getoption("--driver_folder")
-    headless = request.config.getoption("--headless")
     executor = request.config.getoption('--executor')
     logs = request.config.getoption("--logs")
     version = request.config.getoption("--bversion")
@@ -47,11 +41,7 @@ def driver(request):
 
     if executor == "localhost":
         if browser == "chrome":
-            options = ChromeOptions()
-            options.headless = headless
-            driver = webdriver.Chrome(
-              options=options, executable_path=f"{driver_folder}{os.sep}chromedriver"
-        )
+            driver = webdriver.Chrome(ChromeDriverManager().install())
     else:
         executor_url = f"http://{executor}:4444/wd/hub"
         capabilities = {
