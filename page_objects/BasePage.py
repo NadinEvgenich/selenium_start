@@ -37,7 +37,7 @@ class BasePage:
     def _verify_element(self, locator: tuple):
         self.logger.info(f"Check of element: {locator}")
         try:
-            return WebDriverWait(self.driver, 2).until(EC.visibility_of_element_located(locator))
+            return WebDriverWait(self.driver, 5).until(EC.visibility_of_element_located(locator))
         except TimeoutException:
             allure.attach(name=f"{locator}",
                           body=self.driver.get_screenshot_as_png(),
@@ -49,7 +49,7 @@ class BasePage:
     def _verify_title(self, title):
         self.logger.info(f"Check page: {title}")
         try:
-            return WebDriverWait(self.driver, 2).until(EC.title_is(title))
+            return WebDriverWait(self.driver, 5).until(EC.title_is(title))
         except TimeoutException:
             allure.attach(name=f"{title}",
                           body=self.driver.get_screenshot_as_png(),
